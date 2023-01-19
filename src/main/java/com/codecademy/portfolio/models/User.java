@@ -9,6 +9,8 @@ import lombok.Data;
 public class User {
     @Id
     @GeneratedValue
+    private Long id;
+    @Column(unique = true, updatable = false)
     private String username;
     @Column
     private String City;

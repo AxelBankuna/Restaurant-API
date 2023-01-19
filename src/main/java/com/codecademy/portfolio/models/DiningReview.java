@@ -8,7 +8,8 @@ import lombok.Data;
 @Table(name="DINING_REVIEW")
 public class DiningReview {
     @Id
-    @Column(name="USERNAME", updatable=false)
+    private Long id;
+    @Column(name="USERNAME", updatable=false, unique = true)
     private String username;
     @Column
     private Long restaurantId;

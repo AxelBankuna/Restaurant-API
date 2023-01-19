@@ -1,10 +1,12 @@
 package com.codecademy.portfolio.controllers;
 
+import com.codecademy.portfolio.models.DiningReview;
 import com.codecademy.portfolio.models.User;
 import com.codecademy.portfolio.repositories.UserRepository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
+import java.util.stream.StreamSupport;
 
 @RestController
 @RequestMapping("/users")
@@ -33,11 +35,19 @@ public class UserController {
     }
 
     @GetMapping("/user/{username}")
-    public User getUser(@PathVariable("username") String username) {
-        Optional<User> userToUpdateOptional = this.userRepository.findById(username);
+    public User getUserByUsername(@PathVariable("username") String username) {
+        Iterable<User> allUsers = this.userRepository.findAll();
+        Optional<User> userToUpdateOptional =
+                StreamSupport.stream(allUsers.spliterator(), false)
+                        .filter(u -> u.getUsername().toLowerCase().equals(username.toLowerCase())).findFirst();
         if (userToUpdateOptional.isPresent()) {
             return userToUpdateOptional.get();
         }
         return null;
+    }
+
+    @PostMapping("/user/{id}/review")
+    public DiningReview submitReview(User user, DiningReview review) {
+
     }
 }
