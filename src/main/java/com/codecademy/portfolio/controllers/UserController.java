@@ -21,7 +21,7 @@ public class UserController {
         return this.userRepository.save(newUser);
     }
 
-    @PutMapping("/{username}")
+    @PutMapping("/user/{username}")
     public User updateUser(@PathVariable("username") String username, User userUpdate) {
         Optional<User> userToUpdateOptional = this.userRepository.findById(username);
 
@@ -32,5 +32,12 @@ public class UserController {
         return null;
     }
 
-
+    @GetMapping("/user/{username}")
+    public User getUser(@PathVariable("username") String username) {
+        Optional<User> userToUpdateOptional = this.userRepository.findById(username);
+        if (userToUpdateOptional.isPresent()) {
+            return userToUpdateOptional.get();
+        }
+        return null;
+    }
 }
