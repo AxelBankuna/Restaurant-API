@@ -8,9 +8,7 @@ import lombok.Data;
 @Table(name="DINING_REVIEW")
 public class DiningReview {
     @Id
-    @GeneratedValue
-    private Long id;
-    @Column(name="USERNAME")
+    @Column(name="USERNAME", updatable=false)
     private String username;
     @Column
     private Long restaurantId;
@@ -22,4 +20,6 @@ public class DiningReview {
     private Float dairyScore;
     @Column
     private String commentary;
+    @Column
+    private Status status;
 }
