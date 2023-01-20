@@ -45,9 +45,4 @@ public class UserController {
         }
         return null;
     }
-
-    @PostMapping("/user/{id}/review")
-    public DiningReview submitReview(User user, DiningReview review) {
-
-    }
 }
