@@ -4,11 +4,10 @@ import com.codecademy.portfolio.models.DiningReview;
 import com.codecademy.portfolio.models.Status;
 import com.codecademy.portfolio.models.User;
 import com.codecademy.portfolio.repositories.DiningReviewRepository;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -34,4 +33,18 @@ public class DiningReviewController {
                 .filter(review -> review.getStatus() == Status.PENDING)
                 .collect(Collectors.toList());
     }
+
+    @PutMapping("/review/{id}")
+    public DiningReview adminReview(@PathVariable("id") Long id, Status status) {
+        Optional<DiningReview> reviewOptional = this.diningReviewRepository.findById(id);
+
+        if (reviewOptional.isPresent()) {
+            DiningReview reviewed = reviewOptional.get();
+            reviewed.setStatus(status);
+            return this.diningReviewRepository.save(reviewed);
+        }
+        return null;
+    }
+
+
 }
