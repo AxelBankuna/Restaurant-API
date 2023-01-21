@@ -10,6 +10,10 @@ public class Restaurant {
     @Id
     @GeneratedValue
     private Long id;
+    @Column
+    private String name;
+    @Column()
+    private Integer zipcode;
     @Column(name="PEANUT")
     private Long peanutAverage;
     @Column(name="EGG")
