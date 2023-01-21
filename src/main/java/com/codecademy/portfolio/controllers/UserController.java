@@ -5,6 +5,7 @@ import com.codecademy.portfolio.models.User;
 import com.codecademy.portfolio.repositories.UserRepository;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
 
@@ -24,8 +25,8 @@ public class UserController {
     }
 
     @PutMapping("/user/{username}")
-    public User updateUser(@PathVariable("username") String username, User userUpdate) {
-        Optional<User> userToUpdateOptional = this.userRepository.findById(username);
+    public User updateUser(@PathVariable("username") String username, @RequestBody User userUpdate) {
+        Optional<User> userToUpdateOptional = this.userRepository.findByUsername(username);
 
         if (userToUpdateOptional.isPresent()) {
             userUpdate.setUsername(userToUpdateOptional.get().getUsername());
@@ -36,12 +37,9 @@ public class UserController {
 
     @GetMapping("/user/{username}")
     public User getUserByUsername(@PathVariable("username") String username) {
-        Iterable<User> allUsers = this.userRepository.findAll();
-        Optional<User> userToUpdateOptional =
-                StreamSupport.stream(allUsers.spliterator(), false)
-                        .filter(u -> u.getUsername().toLowerCase().equals(username.toLowerCase())).findFirst();
-        if (userToUpdateOptional.isPresent()) {
-            return userToUpdateOptional.get();
+        Optional<User> userOptional = this.userRepository.findByUsername(username.toLowerCase());
+        if (userOptional.isPresent()) {
+            return userOptional.get();
         }
         return null;
     }

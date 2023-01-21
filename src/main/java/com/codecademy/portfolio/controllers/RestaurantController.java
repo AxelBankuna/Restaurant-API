@@ -4,6 +4,7 @@ import com.codecademy.portfolio.models.Restaurant;
 import com.codecademy.portfolio.repositories.RestaurantRepository;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -49,9 +50,12 @@ public class RestaurantController {
         return null;
     }
 
-    @GetMapping("/{zipcode}")
-    public List<Restaurant> getRestaurantsByZipcodeAndAllergy(@PathVariable("zipcode") Integer zipcode) {
-        // TODO: 2023/01/21 complete functionality with allergies 
-        return this.restaurantRepository.findAllByZipcode(zipcode);
+    @GetMapping("/search")
+    public List<Restaurant> getRestaurantsByZipcodeAndAllergy(@RequestParam(required = false) Integer zipcode) {
+        if (Objects.nonNull(zipcode)) {
+            return this.restaurantRepository.findAllByZipcode(zipcode);
+        }
+        return null;
+        // TODO: 2023/01/21 complete functionality with allergies
     }
 }

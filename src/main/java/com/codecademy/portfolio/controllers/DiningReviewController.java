@@ -33,36 +33,4 @@ public class DiningReviewController {
 
         return this.diningReviewRepository.save(review);
     }
-
-    @GetMapping("/pending")
-    public List<DiningReview> getPendingReviews() {
-        return StreamSupport.stream(this.diningReviewRepository.findAll().spliterator(), false)
-                .filter(review -> review.getStatus() == Status.PENDING)
-                .collect(Collectors.toList());
-    }
-
-    @PutMapping("/review/{id}")
-    public DiningReview adminReview(@PathVariable("id") Long id, Status status) {
-        Optional<DiningReview> reviewOptional = this.diningReviewRepository.findById(id);
-
-        if (reviewOptional.isPresent()) {
-            DiningReview reviewed = reviewOptional.get();
-            reviewed.setStatus(status);
-            return this.diningReviewRepository.save(reviewed);
-        }
-        return null;
-    }
-
-    @GetMapping("/restaurant/{id}/")
-    public List<DiningReview> getRestaurantApprovedReviews(@PathVariable("id") Long id) {
-        Optional<Restaurant> restaurantOptional = this.restaurantRepository.findById(id);
-
-        if (restaurantOptional.isPresent()) {
-            return StreamSupport.stream(this.diningReviewRepository.findAll().spliterator(), false)
-                    .filter(review -> review.getStatus() == Status.ACCEPTED && Objects.equals(review.getRestaurantId(), id))
-                    .collect(Collectors.toList());
-        }
-        return null;
-    }
-
 }
