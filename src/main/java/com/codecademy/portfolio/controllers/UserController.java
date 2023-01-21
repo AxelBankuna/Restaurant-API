@@ -19,13 +19,18 @@ public class UserController {
         this.userRepository = userRepository;
     }
 
-    @PostMapping()
-    public User createUser(User newUser) {
+    @PostMapping("")
+    public User createUser(@RequestBody User newUser) {
         return this.userRepository.save(newUser);
     }
 
+    @GetMapping("")
+    public Iterable<User> getAllUsers() {
+        return this.userRepository.findAll();
+    }
+
     @PutMapping("/user/{username}")
-    public User updateUser(@PathVariable("username") String username, @RequestBody User userUpdate) {
+    public User updateUser(@PathVariable("username") String username, User userUpdate) {
         Optional<User> userToUpdateOptional = this.userRepository.findByUsername(username);
 
         if (userToUpdateOptional.isPresent()) {
