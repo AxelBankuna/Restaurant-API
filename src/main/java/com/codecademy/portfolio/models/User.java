@@ -12,10 +12,14 @@ public class User {
     private Long id;
     @Column(unique = true, updatable = false)
     private String username;
-    private String City;
+    private String city;
+    @Column(name="STATE")
     private String state;
     private Integer zipcode;
+    @Column(name="PEANUTINTEREST")
     private Boolean peanutInterest;
+    @Column(name="EGGINTEREST")
     private Boolean eggInterest;
+    @Column(name="DAIRYINTEREST")
     private Boolean dairyInterest;
 }

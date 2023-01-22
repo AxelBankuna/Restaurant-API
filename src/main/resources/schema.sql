@@ -1,2 +1,3 @@
-INSERT INTO users(id,username,city,state,zipcode,peanutInterest,eggInterest,dairyInterest)
-VALUES (1,'JonnyCage','New York','NY','zipcode',10001,false,true,true);
+INSERT INTO USERS(id,username,city,"STATE",zipcode,peanutInterest,eggInterest,dairyInterest)
+VALUES (1,'JonnyCage','New York','NY',10001,false,true,true);
+
