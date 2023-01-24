@@ -34,7 +34,7 @@ public class DiningReviewController {
         if (userOptional.isPresent() && restaurantOptional.isPresent()) {
             review.setUsername(userOptional.get().getUsername());
         } else {
-            System.out.println("User of restaurant does not exist");
+            System.out.println("User or restaurant does not exist");
             return null;
         }
         return this.diningReviewRepository.save(review);
