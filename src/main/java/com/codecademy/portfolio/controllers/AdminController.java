@@ -2,6 +2,7 @@ package com.codecademy.portfolio.controllers;
 
 import com.codecademy.portfolio.models.DiningReview;
 import com.codecademy.portfolio.models.Restaurant;
+import com.codecademy.portfolio.models.ReviewStatusUpdate;
 import com.codecademy.portfolio.models.Status;
 import com.codecademy.portfolio.repositories.DiningReviewRepository;
 import com.codecademy.portfolio.repositories.RestaurantRepository;
@@ -14,7 +15,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/api/v1/admin")
 public class AdminController {
 
     private final RestaurantRepository restaurantRepository;
@@ -26,19 +27,20 @@ public class AdminController {
         this.diningReviewRepository = diningReviewRepository;
     }
 
-    @PutMapping("/review/{id}")
-    public DiningReview adminReview(@PathVariable("id") Long id, Status status) {
+    @PutMapping("review/{id}")
+    public DiningReview adminReview(@PathVariable("id") Long id, @RequestBody ReviewStatusUpdate update) {
         Optional<DiningReview> reviewOptional = this.diningReviewRepository.findById(id);
 
         if (reviewOptional.isPresent()) {
             DiningReview reviewed = reviewOptional.get();
-            reviewed.setStatus(status);
+            reviewed.setStatus(update.getStatus());
             return this.diningReviewRepository.save(reviewed);
         }
         return null;
     }
 
-    @GetMapping("/restaurant/{id}/")
+
+    @GetMapping("restaurant/{id}/")
     public List<DiningReview> getRestaurantApprovedReviews(@PathVariable("id") Long id) {
         Optional<Restaurant> restaurantOptional = this.restaurantRepository.findById(id);
 
@@ -50,7 +52,7 @@ public class AdminController {
         return null;
     }
 
-    @GetMapping("/reviews/pending")
+    @GetMapping("reviews/pending")
     public List<DiningReview> getPendingReviews() {
         return StreamSupport.stream(this.diningReviewRepository.findAll().spliterator(), false)
                 .filter(review -> review.getStatus() == Status.PENDING)
