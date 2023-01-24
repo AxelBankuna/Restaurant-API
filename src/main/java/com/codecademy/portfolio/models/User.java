@@ -19,7 +19,7 @@ public class User {
             initialValue = 10
     )
     private Long id;
-    @Column(unique = true, updatable = false)
+    @Column(unique = true, updatable = false, nullable = false)
     private String username;
     private String city;
     @Column(name="STATE")

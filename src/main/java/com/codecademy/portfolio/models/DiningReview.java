@@ -19,9 +19,9 @@ public class DiningReview {
             initialValue = 10
     )
     private Long id;
-    @Column(updatable=false)
+    @Column(updatable=false, nullable = false)
     private String username;
-    @Column(name = "RESTAURANTID")
+    @Column(name = "RESTAURANTID", nullable = false)
     private Long restaurantId;
     @Column(name = "PEANUTSCORE")
     private Float peanutScore;
@@ -29,9 +29,9 @@ public class DiningReview {
     private Float eggScore;
     @Column(name = "DAIRYSCORE")
     private Float dairyScore;
-    @Column
+    @Column(nullable = false)
     private String commentary;
     @Enumerated(EnumType.STRING)
-    @Column
+    @Column(nullable = false)
     private Status status;
 }

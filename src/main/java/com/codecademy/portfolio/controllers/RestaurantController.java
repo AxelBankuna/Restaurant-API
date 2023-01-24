@@ -1,7 +1,6 @@
 package com.codecademy.portfolio.controllers;
 
 import com.codecademy.portfolio.models.Restaurant;
-import com.codecademy.portfolio.models.User;
 import com.codecademy.portfolio.repositories.RestaurantRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,8 +8,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 import java.util.List;
 
 
@@ -37,10 +34,7 @@ public class RestaurantController {
     public Restaurant getRestaurant(@PathVariable("id") Long id) {
         Optional<Restaurant> restaurantOptional = this.restaurantRepository.findById(id);
 
-        if (restaurantOptional.isPresent())
-            return restaurantOptional.get();
-
-        return null;
+        return restaurantOptional.orElse(null);
     }
 
     @GetMapping("search")
