@@ -40,7 +40,7 @@ public class AdminController {
     }
 
 
-    @GetMapping("restaurant/{id}/")
+    @GetMapping("restaurant/{id}")
     public List<DiningReview> getRestaurantApprovedReviews(@PathVariable("id") Long id) {
         Optional<Restaurant> restaurantOptional = this.restaurantRepository.findById(id);
 
