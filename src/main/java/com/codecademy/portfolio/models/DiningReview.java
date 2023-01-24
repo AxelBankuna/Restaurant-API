@@ -5,22 +5,33 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name="DINING_REVIEW")
+@Table(name="DINING_REVIEWS")
 public class DiningReview {
     @Id
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE,
+            generator = "diningReview_id_generator"
+    )
+    @SequenceGenerator(
+            name = "diningReview_id_generator",
+            sequenceName = "diningReview_id_sequence_name",
+            allocationSize = 1,
+            initialValue = 10
+    )
     private Long id;
-    @Column(name="USERNAME", updatable=false, unique = true)
+    @Column(updatable=false)
     private String username;
-    @Column
+    @Column(name = "RESTAURANTID")
     private Long restaurantId;
-    @Column
+    @Column(name = "PEANUTSCORE")
     private Float peanutScore;
-    @Column
+    @Column(name = "EGGSCORE")
     private Float eggScore;
-    @Column
+    @Column(name = "DAIRYSCORE")
     private Float dairyScore;
     @Column
     private String commentary;
+    @Enumerated(EnumType.STRING)
     @Column
     private Status status;
 }

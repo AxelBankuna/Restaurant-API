@@ -1,7 +1,10 @@
 package com.codecademy.portfolio.controllers;
 
 import com.codecademy.portfolio.models.Restaurant;
+import com.codecademy.portfolio.models.User;
 import com.codecademy.portfolio.repositories.RestaurantRepository;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Objects;
@@ -12,35 +15,25 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/restaurants")
+@RequestMapping("/api/v1/restaurants")
 public class RestaurantController {
-    private RestaurantRepository restaurantRepository;
+    private final RestaurantRepository restaurantRepository;
 
     public RestaurantController(RestaurantRepository restaurantRepository) {
         this.restaurantRepository = restaurantRepository;
     }
 
-    @PostMapping("/")
-    public Restaurant addRestaurant(Restaurant restaurant) {
-        List<Restaurant> restaurantList = StreamSupport.stream(this.restaurantRepository.findAll().spliterator(),
-                false).collect(Collectors.toList());
-
-        if (restaurantList.size() == 0)
-            return null;
-
-        Optional<Restaurant> restaurantOptional = restaurantList.stream()
-                .filter(r -> r.getName() == restaurant.getName() && r.getZipcode() == restaurant.getZipcode())
-                .findFirst();
-
-        if (restaurantOptional.isPresent()) {
-            // TODO: 2023/01/21 failure when restaurant already exists
-        } else
-            return this.restaurantRepository.save(restaurant);
-
-        return null;
+    @PostMapping("")
+    public ResponseEntity<Restaurant> addRestaurant(@RequestBody Restaurant newRestaurant) {
+        return new ResponseEntity<>(this.restaurantRepository.save(newRestaurant), HttpStatus.CREATED);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("")
+    public ResponseEntity<Iterable<Restaurant>> getAllRestaurants() {
+        return new ResponseEntity<>(this.restaurantRepository.findAll(), HttpStatus.CREATED);
+    }
+
+    @GetMapping("{id}")
     public Restaurant getRestaurant(@PathVariable("id") Long id) {
         Optional<Restaurant> restaurantOptional = this.restaurantRepository.findById(id);
 
@@ -50,10 +43,18 @@ public class RestaurantController {
         return null;
     }
 
-    @GetMapping("/search")
-    public List<Restaurant> getRestaurantsByZipcodeAndAllergy(@RequestParam(required = false) Integer zipcode) {
+    @GetMapping("search")
+    public List<Restaurant> getRestaurantsByZipcodeAndAllergy(
+            @RequestParam(required = false) Integer zipcode,
+            @RequestParam(required = false) String allergy) {
+
         if (Objects.nonNull(zipcode)) {
+            System.out.println("searching for all restaurants by zipcode");
             return this.restaurantRepository.findAllByZipcode(zipcode);
+        }
+
+        if (Objects.nonNull(allergy)) {
+
         }
         return null;
         // TODO: 2023/01/21 complete functionality with allergies
