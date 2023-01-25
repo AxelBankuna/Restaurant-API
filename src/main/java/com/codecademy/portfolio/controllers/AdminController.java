@@ -6,12 +6,14 @@ import com.codecademy.portfolio.models.ReviewStatusUpdate;
 import com.codecademy.portfolio.models.Status;
 import com.codecademy.portfolio.repositories.DiningReviewRepository;
 import com.codecademy.portfolio.repositories.RestaurantRepository;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @RestController
@@ -28,34 +30,52 @@ public class AdminController {
     }
 
     @PutMapping("review/{id}")
-    public DiningReview adminReview(@PathVariable("id") Long id, @RequestBody ReviewStatusUpdate update) {
+    public ResponseEntity<DiningReview> adminReview(@PathVariable("id") Long id,
+                                                   @RequestBody ReviewStatusUpdate update) {
         Optional<DiningReview> reviewOptional = this.diningReviewRepository.findById(id);
 
         if (reviewOptional.isPresent()) {
             DiningReview reviewed = reviewOptional.get();
             reviewed.setStatus(update.getStatus());
-            return this.diningReviewRepository.save(reviewed);
+            return new ResponseEntity<>(this.diningReviewRepository.save(reviewed), HttpStatus.OK);
         }
-        return null;
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("X-Error-Message", "Error: failed to find review with id: " + id);
+        return new ResponseEntity<>(null, headers, HttpStatus.NOT_FOUND);
     }
 
 
     @GetMapping("restaurant/{id}")
-    public List<DiningReview> getRestaurantApprovedReviews(@PathVariable("id") Long id) {
+    public ResponseEntity<List<DiningReview>> getRestaurantApprovedReviews(@PathVariable("id") Long id) {
         Optional<Restaurant> restaurantOptional = this.restaurantRepository.findById(id);
 
         if (restaurantOptional.isPresent()) {
-            return StreamSupport.stream(this.diningReviewRepository.findAll().spliterator(), false)
+            List<DiningReview> approvedReviews =
+                    StreamSupport.stream(this.diningReviewRepository.findAll().spliterator(), false)
                     .filter(review -> review.getStatus() == Status.ACCEPTED && Objects.equals(review.getRestaurantId(), id))
-                    .collect(Collectors.toList());
+                    .toList();
+            return new ResponseEntity<>(approvedReviews, HttpStatus.OK);
         }
-        return null;
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("X-Error-Message",
+                "Error: Unable to get approved reviews for restaurant with id: " + id);
+        return new ResponseEntity<>(null, headers, HttpStatus.NOT_FOUND);
     }
 
     @GetMapping("reviews/pending")
-    public List<DiningReview> getPendingReviews() {
-        return StreamSupport.stream(this.diningReviewRepository.findAll().spliterator(), false)
-                .filter(review -> review.getStatus() == Status.PENDING)
-                .collect(Collectors.toList());
+    public ResponseEntity<List<DiningReview>> getPendingReviews() {
+        try {
+            List<DiningReview> pendingReviews = StreamSupport
+                    .stream(this.diningReviewRepository.findAll().spliterator(), false)
+                    .filter(review -> review.getStatus() == Status.PENDING)
+                    .toList();
+            return new ResponseEntity<>(pendingReviews, HttpStatus.OK);
+        } catch (Exception e) {
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("X-Error-Message",
+                    "Error: Unable to get list of pending reviews: " + e.getMessage());
+            return new ResponseEntity<>(null, headers, HttpStatus.NOT_FOUND);
+        }
+
     }
 }

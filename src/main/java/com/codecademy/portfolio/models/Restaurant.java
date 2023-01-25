@@ -38,10 +38,6 @@ public class Restaurant {
     @Column(name="AVERAGESCORE")
     private Double averageScore;
 
-    public Double calculateAverageScore() {
-        return (this.dairyAverage + this.eggAverage + this.peanutAverage) / 3;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

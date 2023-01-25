@@ -85,16 +85,4 @@ public class RestaurantController {
                 "Error: Unable to load list based on zipcode and allergy");
         return new ResponseEntity<>(null, headers, HttpStatus.NOT_FOUND);
     }
-
-    @GetMapping("{id}")
-    public ResponseEntity<Restaurant> getRestaurantById(@PathVariable Long id) {
-        Optional<Restaurant> restaurant = this.restaurantRepository.findById(id);
-        HttpHeaders headers = new HttpHeaders();
-        if (restaurant.isPresent()) {
-            return new ResponseEntity<>(restaurant.get(), headers, HttpStatus.OK);
-        } else {
-            headers.add("X-Error-Message", "Error: Restaurant not found with id: " + id);
-            return new ResponseEntity<>(null, headers, HttpStatus.NOT_FOUND);
-        }
-    }
 }
