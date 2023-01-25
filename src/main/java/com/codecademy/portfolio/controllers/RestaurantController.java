@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.List;
+import java.util.stream.StreamSupport;
 
 
 @RestController
@@ -22,6 +23,13 @@ public class RestaurantController {
 
     @PostMapping("")
     public ResponseEntity<Restaurant> addRestaurant(@RequestBody Restaurant newRestaurant) {
+        Iterable<Restaurant> allRestaurants = this.restaurantRepository.findAll();
+        if (StreamSupport.stream(allRestaurants.spliterator(), false).anyMatch(
+                restaurant -> newRestaurant.equals(restaurant)
+        )) {
+            System.out.println("Restaurant already exists.");
+            return null;
+        }
         return new ResponseEntity<>(this.restaurantRepository.save(newRestaurant), HttpStatus.CREATED);
     }
 
