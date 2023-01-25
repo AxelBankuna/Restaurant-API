@@ -19,4 +19,8 @@ public interface RestaurantRepository extends CrudRepository<Restaurant, Long> {
 
     @Query("SELECT r FROM Restaurant r WHERE r.zipcode = :zipcode and (r.peanutAverage IS NOT NULL or r.eggAverage IS NOT NULL or r.dairyAverage IS NOT NULL)")
     List<Restaurant> findAllByZipcodeAndNonNullAverages(@Param("zipcode") Integer zipcode);
+
+    List<Restaurant> findAllByZipcodeAndPeanutAverageIsNotNull(Integer zipcode);
+    List<Restaurant> findAllByZipcodeAndEggAverageIsNotNull(Integer zipcode);
+    List<Restaurant> findAllByZipcodeAndDairyAverageIsNotNull(Integer zipcode);
 }

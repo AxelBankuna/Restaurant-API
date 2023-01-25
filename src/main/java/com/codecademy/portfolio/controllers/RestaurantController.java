@@ -51,14 +51,15 @@ public class RestaurantController {
             @RequestParam(required = false) String allergy) {
 
         if (Objects.nonNull(zipcode)) {
-            System.out.println("searching for all restaurants by zipcode");
-            return this.restaurantRepository.findAllByZipcode(zipcode);
-        }
-
-        if (Objects.nonNull(allergy)) {
-
+            if (Objects.nonNull(allergy)) {
+                return switch (allergy.toLowerCase()) {
+                    case "dairy" -> this.restaurantRepository.findAllByZipcodeAndDairyAverageIsNotNull(zipcode);
+                    case "peanut" -> this.restaurantRepository.findAllByZipcodeAndPeanutAverageIsNotNull(zipcode);
+                    case "egg" -> this.restaurantRepository.findAllByZipcodeAndEggAverageIsNotNull(zipcode);
+                    default -> this.restaurantRepository.findAllByZipcodeAndNonNullAverages(zipcode);
+                };
+            }
         }
         return null;
-        // TODO: 2023/01/21 complete functionality with allergies
     }
 }
