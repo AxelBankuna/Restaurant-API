@@ -33,15 +33,28 @@ public class DiningReviewController {
 
         if (userOptional.isPresent() && restaurantOptional.isPresent()) {
             review.setUsername(userOptional.get().getUsername());
+
+            DiningReview submittedReview = this.diningReviewRepository.save(review);
+            updateRestaurantScore(review, restaurantOptional.get());
+            return submittedReview;
         } else {
             System.out.println("User or restaurant does not exist");
             return null;
         }
-        return this.diningReviewRepository.save(review);
     }
 
     @GetMapping("")
     public Iterable<DiningReview> getAllReviews() {
         return this.diningReviewRepository.findAll();
+    }
+
+    private void updateRestaurantScore(DiningReview review, Restaurant restaurant) {
+        Long restaurantId = restaurant.getId();
+        Double averageDairy = this.diningReviewRepository.averageDairyScoreByRestaurantId(restaurantId);
+        Double averagePeanut = this.diningReviewRepository.averagePeanutScoreByRestaurantId(restaurantId);
+        Double averageEgg = this.diningReviewRepository.averageEggScoreByRestaurantId(restaurantId);
+        Double overallAverage = (averageDairy + averageEgg + averagePeanut) / 3;
+
+        this.restaurantRepository.setAverages(restaurantId, averagePeanut, averageEgg, averageDairy, overallAverage);
     }
 }
