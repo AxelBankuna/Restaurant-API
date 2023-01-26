@@ -38,7 +38,6 @@ public class DiningReviewController {
             review.setUsername(userOptional.get().getUsername());
 
             DiningReview submittedReview = this.diningReviewRepository.save(review);
-            updateRestaurantScore(restaurantOptional.get());
             return new ResponseEntity<>(submittedReview, HttpStatus.OK);
         } else {
             HttpHeaders headers = new HttpHeaders();
@@ -59,15 +58,5 @@ public class DiningReviewController {
             headers.add("X-Error-Message", "Error: " + e.getMessage());
             return new ResponseEntity<>(null, headers, HttpStatus.OK);
         }
-    }
-
-    private void updateRestaurantScore(Restaurant restaurant) {
-        Long restaurantId = restaurant.getId();
-        Double averageDairy = this.diningReviewRepository.averageDairyScoreByRestaurantId(restaurantId);
-        Double averagePeanut = this.diningReviewRepository.averagePeanutScoreByRestaurantId(restaurantId);
-        Double averageEgg = this.diningReviewRepository.averageEggScoreByRestaurantId(restaurantId);
-        Double overallAverage = (averageDairy + averageEgg + averagePeanut) / 3;
-
-        this.restaurantRepository.setAverages(restaurantId, averagePeanut, averageEgg, averageDairy, overallAverage);
     }
 }

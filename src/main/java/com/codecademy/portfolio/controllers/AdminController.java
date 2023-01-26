@@ -37,7 +37,25 @@ public class AdminController {
         if (reviewOptional.isPresent()) {
             DiningReview reviewed = reviewOptional.get();
             reviewed.setStatus(update.getStatus());
-            return new ResponseEntity<>(this.diningReviewRepository.save(reviewed), HttpStatus.OK);
+
+            Optional<Restaurant> restaurantOptional = this.restaurantRepository.findById(
+                    reviewed.getRestaurantId()
+            );
+
+            if (restaurantOptional.isPresent()) {
+                try {
+                    DiningReview updatedReview = this.diningReviewRepository.save(reviewed);
+                    updateRestaurantScore(restaurantOptional.get());
+                    return new ResponseEntity<>(updatedReview, HttpStatus.OK);
+                } catch (Exception e) {
+                    HttpHeaders headers = new HttpHeaders();
+                    headers.add("X-Error-Message",
+                            "Error: failed to review dining-review with id: " + id + ". "
+                                    + e.getMessage());
+                    return new ResponseEntity<>(null, headers, HttpStatus.NOT_FOUND);
+                }
+            }
+
         }
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Error-Message", "Error: failed to find review with id: " + id);
@@ -76,6 +94,15 @@ public class AdminController {
                     "Error: Unable to get list of pending reviews: " + e.getMessage());
             return new ResponseEntity<>(null, headers, HttpStatus.NOT_FOUND);
         }
+    }
 
+    private void updateRestaurantScore(Restaurant restaurant) {
+        Long restaurantId = restaurant.getId();
+        Double averageDairy = this.diningReviewRepository.averageDairyScoreByRestaurantId(restaurantId);
+        Double averagePeanut = this.diningReviewRepository.averagePeanutScoreByRestaurantId(restaurantId);
+        Double averageEgg = this.diningReviewRepository.averageEggScoreByRestaurantId(restaurantId);
+        Double overallAverage = (averageDairy + averageEgg + averagePeanut) / 3;
+
+        this.restaurantRepository.setAverages(restaurantId, averagePeanut, averageEgg, averageDairy, overallAverage);
     }
 }
